@@ -221,6 +221,9 @@ class Database:
             if filtros.get("plataforma_id"):
                 query += " AND v.plataforma_id = ?"
                 params.append(filtros["plataforma_id"])
+            if filtros.get("proveedor_id"):
+                query += " AND v.proveedor_id = ?"
+                params.append(filtros["proveedor_id"])
             if filtros.get("estado_pago"):
                 query += " AND v.estado_pago = ?"
                 params.append(filtros["estado_pago"])

@@ -80,7 +80,7 @@ class StreamControlApp(ctk.CTk):
             ("clientes",    "👥",  "Clientes"),
             ("deudas",      "📋",  "Deudas"),
             ("plataformas", "📺",  "Plataformas"),
-            ("proveedores", "🏭",  "Proveedores"),
+            ("proveedores", "🏭",  "Distribuidores"),
             ("reportes",    "📊",  "Reportes"),
             ("configuracion","⚙️", "Configuración"),
         ]

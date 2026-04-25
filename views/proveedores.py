@@ -17,7 +17,7 @@ class ProveedoresView(ctk.CTkFrame):
     def _build(self):
         hdr = ctk.CTkFrame(self, fg_color="transparent")
         hdr.pack(fill="x", padx=24, pady=(24, 8))
-        title_label(hdr, "🏭  Gestión de Proveedores", size=22).pack(side="left")
+        title_label(hdr, "🏭  Gestión de Distribuidores", size=22).pack(side="left")
 
         main = ctk.CTkFrame(self, fg_color="transparent")
         main.pack(fill="both", expand=True, padx=24, pady=4)
@@ -29,7 +29,7 @@ class ProveedoresView(ctk.CTkFrame):
         form = card(main)
         form.grid(row=0, column=0, sticky="nsew", padx=(0, 8))
 
-        ctk.CTkLabel(form, text="➕  Nuevo / Editar Proveedor",
+        ctk.CTkLabel(form, text="➕  Nuevo / Editar Distribuidor",
                      font=ctk.CTkFont(size=14, weight="bold"),
                      text_color=COLORS["text"]).pack(anchor="w", padx=16, pady=(14, 8))
 
@@ -38,7 +38,7 @@ class ProveedoresView(ctk.CTkFrame):
                          font=ctk.CTkFont(size=13),
                          text_color=COLORS["text_dim"]).pack(anchor="w", padx=16, pady=(8, 2))
 
-        lbl("Nombre del proveedor *")
+        lbl("Nombre del distribuidor *")
         self.e_nombre = entry_field(form, placeholder="Nombre")
         self.e_nombre.pack(fill="x", padx=16, pady=(0, 4))
 
@@ -82,7 +82,7 @@ class ProveedoresView(ctk.CTkFrame):
         right.grid_rowconfigure(1, weight=1)
         right.grid_columnconfigure(0, weight=1)
 
-        ctk.CTkLabel(right, text="📋  Lista de Proveedores",
+        ctk.CTkLabel(right, text="📋  Lista de Distribuidores",
                      font=ctk.CTkFont(size=14, weight="bold"),
                      text_color=COLORS["text"]).grid(row=0, column=0, sticky="w", pady=(14, 6))
 
@@ -133,17 +133,17 @@ class ProveedoresView(ctk.CTkFrame):
 
         if self.editing_id:
             self.db.update_proveedor(self.editing_id, nombre, tel, correo, credito, notas, activo)
-            messagebox.showinfo("✅", "Proveedor actualizado.")
+            messagebox.showinfo("✅", "Distribuidor actualizado.")
         else:
             self.db.add_proveedor(nombre, tel, correo, credito, notas)
-            messagebox.showinfo("✅", "Proveedor creado.")
+            messagebox.showinfo("✅", "Distribuidor creado.")
         self._limpiar()
         self._load()
 
     def _cargar_edicion(self):
         sel = self.tree.selection()
         if not sel:
-            messagebox.showwarning("Selección", "Selecciona un proveedor.")
+            messagebox.showwarning("Selección", "Selecciona un distribuidor.")
             return
         pid = int(sel[0])
         for p in self.db.get_proveedores():
@@ -160,9 +160,9 @@ class ProveedoresView(ctk.CTkFrame):
     def _eliminar(self):
         sel = self.tree.selection()
         if not sel:
-            messagebox.showwarning("Selección", "Selecciona un proveedor.")
+            messagebox.showwarning("Selección", "Selecciona un distribuidor.")
             return
-        if messagebox.askyesno("Confirmar", "¿Eliminar este proveedor?"):
+        if messagebox.askyesno("Confirmar", "¿Eliminar este distribuidor?"):
             self.db.delete_proveedor(int(sel[0]))
             self._load()
 
