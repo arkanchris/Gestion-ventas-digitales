@@ -234,8 +234,9 @@ def generar_tirilla(venta, config):
     <table class="dt">
       {row("Correo / Usuario", v("correo_usuario"))}
       {row("Contraseña", v("contrasena"))}
-      {row("PIN", v("pin"))}
       {row("Perfil", v("perfil"))}
+      {row("PIN", v("pin"))}
+      
     </table>{sep}
     <div class="section-title">📅 Vigencia</div>
     <div class="dates-row">

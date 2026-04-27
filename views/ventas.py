@@ -103,8 +103,11 @@ class VentasView(ctk.CTkFrame):
         r3 = _row(pf); _lbl(r3, "Plataforma *", 0)
         plataformas      = self.db.get_plataformas(solo_activas=True)
         self.plat_map    = {p["nombre"]: p["id"] for p in plataformas}
+        self.plat_precio = {p["nombre"]: p["precio_venta"] for p in plataformas}
         self.e_plataforma = _combo(r3, [p["nombre"] for p in plataformas] or ["—"])
         self.e_plataforma.grid(row=0, column=1, sticky="ew", padx=(8, 0))
+        # Auto-fill price when platform changes
+        self.e_plataforma.configure(command=self._on_plataforma_change)
 
         section_header(s, "🔐  Datos de Acceso")
         af = card(s); af.pack(fill="x", padx=24, pady=4)
@@ -136,6 +139,19 @@ class VentasView(ctk.CTkFrame):
         _lbl(r5, "F. Vencimiento", 4)
         self.e_fecha_venc = DateEntryWidget(r5)
         self.e_fecha_venc.grid(row=0, column=5, sticky="ew", padx=(8, 0))
+
+        # ── Fecha de activación = HOY por defecto ──
+        from datetime import date
+        self.e_fecha_act.set(date.today().strftime("%Y-%m-%d"))
+
+        # ── Si hay plataforma preseleccionada, cargar precio ──
+        if plataformas and not self.editing_id:
+            first = plataformas[0]["nombre"]
+            precio_def = self.plat_precio.get(first, 0)
+            if precio_def:
+                self.e_precio.delete(0, "end")
+                self.e_precio.insert(0, str(int(precio_def)))
+
         r6 = ctk.CTkFrame(ff, fg_color="transparent"); r6.pack(fill="x", padx=16, pady=(0, 10))
         ctk.CTkLabel(r6, text="🔒 Estado de Pago (interno)",
                      font=ctk.CTkFont(size=13), text_color=COLORS["text_dim"]).pack(side="left")
@@ -158,6 +174,22 @@ class VentasView(ctk.CTkFrame):
         primary_btn(bf, "💾  Guardar Venta", command=self._guardar_simple).pack(side="left", padx=(0, 8))
         secondary_btn(bf, "✕  Cancelar", command=self._limpiar).pack(side="left")
 
+    def _on_plataforma_change(self, nombre):
+        """Auto-fill price when platform is selected (simple mode)."""
+        if hasattr(self, 'plat_precio') and hasattr(self, 'e_precio'):
+            precio = self.plat_precio.get(nombre, 0)
+            if precio:
+                self.e_precio.delete(0, "end")
+                self.e_precio.insert(0, str(int(precio)))
+
+    def _on_m_plataforma_change(self, nombre):
+        """Auto-fill price when platform is selected (multiple mode)."""
+        if hasattr(self, 'plat_precio_m') and hasattr(self, 'm_precio'):
+            precio = self.plat_precio_m.get(nombre, 0)
+            if precio:
+                self.m_precio.delete(0, "end")
+                self.m_precio.insert(0, str(int(precio)))
+
     # ═══════════════════════════════════════════════════════════
     #  MODO MÚLTIPLE
     # ═══════════════════════════════════════════════════════════
@@ -174,8 +206,11 @@ class VentasView(ctk.CTkFrame):
         r3 = _row(pf); _lbl(r3, "Plataforma *", 0)
         plataformas   = self.db.get_plataformas(solo_activas=True)
         self.plat_map = {p["nombre"]: p["id"] for p in plataformas}
+        self.plat_precio_m = {p["nombre"]: p["precio_venta"] for p in plataformas}
         self.m_plataforma = _combo(r3, [p["nombre"] for p in plataformas] or ["—"])
         self.m_plataforma.grid(row=0, column=1, sticky="ew", padx=(8, 20))
+        # Auto-fill price on platform change
+        self.m_plataforma.configure(command=self._on_m_plataforma_change)
         _lbl(r3, "Perfil", 2)
         self.m_perfil = entry_field(r3, placeholder="Ej: Perfil 2")
         self.m_perfil.grid(row=0, column=3, sticky="ew", padx=(8, 0))
@@ -217,6 +252,18 @@ class VentasView(ctk.CTkFrame):
                      text_color=COLORS["text_dim"]).pack(side="left", padx=(20, 6))
         self.m_notas = entry_field(r5b, placeholder="Opcional")
         self.m_notas.pack(side="left", fill="x", expand=True)
+
+        # ── Fecha activación = HOY por defecto (si no hay item en edición) ──
+        if self.editing_item is None:
+            from datetime import date
+            self.m_fecha_act.set(date.today().strftime("%Y-%m-%d"))
+            # Precio por defecto de la primera plataforma
+            if plataformas:
+                first = plataformas[0]["nombre"]
+                precio_def = self.plat_precio_m.get(first, 0)
+                if precio_def:
+                    self.m_precio.delete(0, "end")
+                    self.m_precio.insert(0, str(int(precio_def)))
 
         # Si hay item en edición, pre-cargar sus datos
         if self.editing_item is not None:

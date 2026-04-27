@@ -175,8 +175,10 @@ def days_remaining(fecha_venc_str):
     if not fecha_venc_str:
         return None
     try:
-        fv = datetime.strptime(fecha_venc_str, "%Y-%m-%d")
-        return (fv - datetime.now()).days
+        from datetime import date
+        fv  = datetime.strptime(fecha_venc_str, "%Y-%m-%d").date()
+        hoy = date.today()
+        return (fv - hoy).days
     except:
         return None
 
