@@ -55,7 +55,7 @@ def generar_cuenta_cobro(distribuidor_nombre, deudas, config,
     for i, d in enumerate(deudas, 1):
         plat   = d.get("plataforma_nombre", "—")
         cliente = d.get("cliente", "—")
-        perfil  = d.get("perfil", "—")
+        perfil  = d.get("orden_compra", "—") or "—"
         f_act   = _fmt(d.get("fecha_activacion", ""))
         f_venc  = _fmt(d.get("fecha_vencimiento", ""))
         precio  = d.get("precio_venta", 0)
@@ -133,11 +133,11 @@ body{{
 /* ══ Cabecera ══ */
 .header{{
   background:#0b1d3a;
-  padding:28px 36px 22px;
+  padding:24px 36px 24px;
   display:flex;justify-content:space-between;align-items:center;
 }}
 .header-left{{}}
-.logo-img{{max-height:70px;max-width:200px;object-fit:contain;border-radius:6px}}
+.logo-img{{max-height:110px;max-width:280px;object-fit:contain;border-radius:8px}}
 .logo-text{{font-size:22px;font-weight:800;color:white;letter-spacing:1px}}
 .header-right{{text-align:right}}
 .doc-title{{
@@ -210,7 +210,7 @@ table.main td{{padding:10px 12px;font-size:13px;color:#1e293b}}
 
 /* ══ PRINT ══ */
 @media print{{
-  @page{{size:A4;margin:10mm}}
+  @page{{size:auto;margin:8mm}}
   body{{background:white;padding:0;display:block}}
   .action-bar{{display:none!important}}
   .doc{{width:100%;box-shadow:none;border-radius:0}}
@@ -266,7 +266,7 @@ table.main td{{padding:10px 12px;font-size:13px;color:#1e293b}}
           <th class="tc">Factura</th>
           <th class="tl">Plataforma</th>
           <th class="tl">Cliente</th>
-          <th class="tc">Perfil</th>
+          <th class="tc">Orden de Compra</th>
           <th class="tc">F. Activación</th>
           <th class="tc">F. Vencimiento</th>
           <th class="tr">Saldo</th>
@@ -313,13 +313,16 @@ async function guardarPDF(btn) {{
 
   try {{
     const el  = document.getElementById('doc');
+    // Tamaño dinámico según contenido real — evita páginas en blanco
+    const hMM = Math.ceil(el.offsetHeight * 0.2646) + 20;
+    const wMM = Math.ceil(el.offsetWidth  * 0.2646) + 16;
     const opt = {{
       margin:      [8, 8, 8, 8],
       filename:    FILE_NAME + '.pdf',
-      image:       {{ type: 'jpeg', quality: 0.97 }},
-      html2canvas: {{ scale: 2, useCORS: true, backgroundColor: '#ffffff' }},
-      jsPDF:       {{ unit: 'mm', format: 'a4', orientation: 'portrait' }},
-      pagebreak:   {{ mode: ['avoid-all', 'css'] }},
+      image:       {{ type: 'jpeg', quality: 0.98 }},
+      html2canvas: {{ scale: 2, useCORS: true, backgroundColor: '#ffffff', logging: false }},
+      jsPDF:       {{ unit: 'mm', format: [wMM, hMM], orientation: 'portrait' }},
+      pagebreak:   {{ mode: 'avoid-all' }},
     }};
     await html2pdf().set(opt).from(el).save();
   }} catch(e) {{

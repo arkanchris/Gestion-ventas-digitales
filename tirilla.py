@@ -46,9 +46,9 @@ body{background:#dde3ea;font-family:'Segoe UI',Arial,sans-serif;
 .sp{display:none;width:15px;height:15px;border:2px solid rgba(255,255,255,.3);
     border-top-color:white;border-radius:50%;animation:spin .7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
-.biz-header{background:#0b1d3a;padding:18px 20px 14px;text-align:center;border-bottom:2px dashed #1e3256}
+.biz-header{background:#0b1d3a;padding:22px 20px 18px;text-align:center;border-bottom:2px dashed #1e3256}
 .biz-logo-wrap{display:flex;justify-content:center;margin-bottom:6px}
-.biz-logo{max-height:66px;max-width:200px;object-fit:contain;border-radius:6px}
+.biz-logo{max-height:110px;max-width:260px;object-fit:contain;border-radius:8px}
 .biz-name-text{font-size:20px;font-weight:800;color:#fff;letter-spacing:1px}
 .factura-badge{display:inline-block;background:rgba(29,111,216,.3);color:#93c5fd;
     border:1px solid rgba(56,189,248,.45);border-radius:20px;padding:3px 14px;
