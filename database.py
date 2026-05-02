@@ -280,11 +280,19 @@ class Database:
         conn.close()
 
     # ─── REPORTES ────────────────────────────────────────────────────────────────
-    def get_resumen_ventas(self, periodo):
+    def get_resumen_ventas(self, periodo, fecha_desde=None, fecha_hasta=None):
         conn = self.get_conn()
         hoy = datetime.now().strftime("%Y-%m-%d")
 
-        if periodo == "dia":
+        if fecha_desde and fecha_hasta:
+            # Rango personalizado
+            where = (f"DATE(v.fecha_registro) >= '{fecha_desde}' "
+                     f"AND DATE(v.fecha_registro) <= '{fecha_hasta}'")
+        elif fecha_desde:
+            where = f"DATE(v.fecha_registro) >= '{fecha_desde}'"
+        elif fecha_hasta:
+            where = f"DATE(v.fecha_registro) <= '{fecha_hasta}'"
+        elif periodo == "dia":
             where = f"DATE(v.fecha_registro) = '{hoy}'"
         elif periodo == "semana":
             where = f"DATE(v.fecha_registro) >= DATE('{hoy}', '-7 days')"
