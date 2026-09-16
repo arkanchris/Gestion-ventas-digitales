@@ -71,8 +71,15 @@ class Database:
             nombre_perfil     TEXT,
             cliente_asignado  TEXT,
             telefono_cliente  TEXT,
+            pin_perfil        TEXT,
+            fecha_inicio      TEXT,
+            fecha_fin         TEXT,
             notas             TEXT,
             FOREIGN KEY(cuenta_maestra_id) REFERENCES cuentas_maestras(id))""")
+        for col in ("pin_perfil", "fecha_inicio", "fecha_fin"):
+            try:
+                c.execute(f"ALTER TABLE perfiles_cuenta ADD COLUMN {col} TEXT")
+            except: pass
 
         c.execute("""CREATE TABLE IF NOT EXISTS gastos (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -391,11 +398,13 @@ class Database:
         conn = self.get_conn()
         conn.execute("""INSERT INTO perfiles_cuenta
             (cuenta_maestra_id,numero_perfil,nombre_perfil,
-             cliente_asignado,telefono_cliente,notas)
-            VALUES (?,?,?,?,?,?)""",
+             cliente_asignado,telefono_cliente,pin_perfil,fecha_inicio,fecha_fin,notas)
+            VALUES (?,?,?,?,?,?,?,?,?)""",
             (data["cuenta_maestra_id"], data["numero_perfil"],
              data["nombre_perfil"], data["cliente_asignado"],
-             data["telefono_cliente"], data["notas"]))
+             data["telefono_cliente"], data.get("pin_perfil",""),
+             data.get("fecha_inicio",""), data.get("fecha_fin",""),
+             data["notas"]))
         conn.commit(); conn.close()
 
     def get_perfiles_cuenta(self, cuenta_maestra_id):
@@ -411,10 +420,12 @@ class Database:
         conn = self.get_conn()
         conn.execute("""UPDATE perfiles_cuenta SET
             numero_perfil=?,nombre_perfil=?,cliente_asignado=?,
-            telefono_cliente=?,notas=? WHERE id=?""",
+            telefono_cliente=?,pin_perfil=?,fecha_inicio=?,fecha_fin=?,notas=?
+            WHERE id=?""",
             (data["numero_perfil"], data["nombre_perfil"],
              data["cliente_asignado"], data["telefono_cliente"],
-             data["notas"], pid))
+             data.get("pin_perfil",""), data.get("fecha_inicio",""),
+             data.get("fecha_fin",""), data["notas"], pid))
         conn.commit(); conn.close()
 
     def delete_perfil_cuenta(self, pid):
