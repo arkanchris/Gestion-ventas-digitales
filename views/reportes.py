@@ -106,7 +106,7 @@ class ReportesView(ctk.CTkFrame):
                 custom_frame, text=txt,
                 command=cmd,
                 height=28, width=90, corner_radius=6,
-                fg_color=COLORS["border"], hover_color="#2a4a7a",
+                fg_color=COLORS["border"], hover_color="#22405c",
                 font=ctk.CTkFont(size=11), text_color=COLORS["text_dim"]
             ).pack(side="left", padx=2)
 

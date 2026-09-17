@@ -3,25 +3,51 @@ import tkinter as tk
 from tkinter import ttk
 from datetime import datetime
 
+# ══════════════════════════════════════════════════════════════
+#  PALETA — Streaming Neón
+# ══════════════════════════════════════════════════════════════
 COLORS = {
-    "bg_dark":   "#0b1120",
-    "bg_card":   "#111c30",
-    "bg_sidebar":"#091020",
-    "accent":    "#1d6fd8",
-    "accent2":   "#38bdf8",
-    "accent3":   "#22c55e",
-    "accent4":   "#f59e0b",
-    "text":      "#f0f6ff",
-    "text_dim":  "#8aabda",
-    "border":    "#1e3256",
-    "red":       "#ef4444",
-    "green":     "#22c55e",
-    "yellow":    "#f59e0b",
+    "bg_dark":   "#070d12",
+    "bg_card":   "#0e1a22",
+    "bg_sidebar":"#0a141a",
+    "accent":    "#0ea5a4",   # teal — acción primaria
+    "accent2":   "#7c6bf0",   # violeta — acento secundario
+    "accent3":   "#20e3c2",   # turquesa brillante — éxito / positivo
+    "accent4":   "#f2b84b",   # ámbar — advertencia
+    "text":      "#eaf6fb",
+    "text_dim":  "#7fa3b8",
+    "border":    "#193040",
+    "input_bg":  "#0a1620",
+    "red":       "#ef5a6f",
+    "green":     "#20e3c2",
+    "yellow":    "#f2b84b",
 }
 
+FONT_DISPLAY = "Bahnschrift"   # títulos / encabezados (viene con Windows 10/11)
+FONT_BODY    = "Segoe UI"      # texto general
+FONT_MONO    = "Consolas"      # cifras, precios, fechas (viene con Windows)
 
+
+def _tint(hex_color, amount=0.16, base=None):
+    """Mezcla un color de acento con el fondo de tarjeta para crear
+    un tono 'chip' tenue y coherente con la paleta, sin depender de
+    valores fijos por color."""
+    base = base or COLORS["bg_card"]
+    hex_color = hex_color.lstrip("#")
+    base = base.lstrip("#")
+    r1, g1, b1 = int(hex_color[0:2], 16), int(hex_color[2:4], 16), int(hex_color[4:6], 16)
+    r2, g2, b2 = int(base[0:2], 16), int(base[2:4], 16), int(base[4:6], 16)
+    r = round(r2 + (r1 - r2) * amount)
+    g = round(g2 + (g1 - g2) * amount)
+    b = round(b2 + (b1 - b2) * amount)
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+
+# ══════════════════════════════════════════════════════════════
+#  BLOQUES BÁSICOS
+# ══════════════════════════════════════════════════════════════
 def card(parent, **kwargs):
-    defaults = dict(fg_color=COLORS["bg_card"], corner_radius=12)
+    defaults = dict(fg_color=COLORS["bg_card"], corner_radius=14)
     defaults.update(kwargs)
     return ctk.CTkFrame(parent, **defaults)
 
@@ -29,8 +55,8 @@ def card(parent, **kwargs):
 def title_label(parent, text, size=20, **kwargs):
     defaults = dict(
         text=text,
-        font=ctk.CTkFont(family="Segoe UI", size=size, weight="bold"),
-        text_color="#ffffff",
+        font=ctk.CTkFont(family=FONT_DISPLAY, size=size, weight="bold"),
+        text_color=COLORS["text"],
     )
     defaults.update(kwargs)
     return ctk.CTkLabel(parent, **defaults)
@@ -39,7 +65,7 @@ def title_label(parent, text, size=20, **kwargs):
 def dim_label(parent, text, size=12, **kwargs):
     defaults = dict(
         text=text,
-        font=ctk.CTkFont(family="Segoe UI", size=size),
+        font=ctk.CTkFont(family=FONT_BODY, size=size),
         text_color=COLORS["text_dim"],
     )
     defaults.update(kwargs)
@@ -49,9 +75,9 @@ def dim_label(parent, text, size=12, **kwargs):
 def primary_btn(parent, text, command=None, **kwargs):
     defaults = dict(
         text=text, command=command, height=38, corner_radius=8,
-        fg_color=COLORS["accent"], hover_color="#1558b0",
-        font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
-        text_color="white",
+        fg_color=COLORS["accent"], hover_color="#0b8482",
+        font=ctk.CTkFont(family=FONT_BODY, size=13, weight="bold"),
+        text_color="#04110f",
     )
     defaults.update(kwargs)
     return ctk.CTkButton(parent, **defaults)
@@ -60,8 +86,8 @@ def primary_btn(parent, text, command=None, **kwargs):
 def danger_btn(parent, text, command=None, **kwargs):
     defaults = dict(
         text=text, command=command, height=38, corner_radius=8,
-        fg_color=COLORS["red"], hover_color="#cc3344",
-        font=ctk.CTkFont(family="Segoe UI", size=13),
+        fg_color=COLORS["red"], hover_color="#c7425a",
+        font=ctk.CTkFont(family=FONT_BODY, size=13),
         text_color="white",
     )
     defaults.update(kwargs)
@@ -71,9 +97,9 @@ def danger_btn(parent, text, command=None, **kwargs):
 def success_btn(parent, text, command=None, **kwargs):
     defaults = dict(
         text=text, command=command, height=38, corner_radius=8,
-        fg_color=COLORS["green"], hover_color="#18a84a",
-        font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"),
-        text_color="#0f1117",
+        fg_color=COLORS["accent3"], hover_color="#17b39d",
+        font=ctk.CTkFont(family=FONT_BODY, size=13, weight="bold"),
+        text_color="#04110f",
     )
     defaults.update(kwargs)
     return ctk.CTkButton(parent, **defaults)
@@ -82,8 +108,8 @@ def success_btn(parent, text, command=None, **kwargs):
 def secondary_btn(parent, text, command=None, **kwargs):
     defaults = dict(
         text=text, command=command, height=38, corner_radius=8,
-        fg_color=COLORS["border"], hover_color="#2a4a7a",
-        font=ctk.CTkFont(family="Segoe UI", size=13),
+        fg_color=COLORS["border"], hover_color="#22405c",
+        font=ctk.CTkFont(family=FONT_BODY, size=13),
         text_color=COLORS["text"],
     )
     defaults.update(kwargs)
@@ -93,9 +119,9 @@ def secondary_btn(parent, text, command=None, **kwargs):
 def entry_field(parent, placeholder="", show=None, **kwargs):
     defaults = dict(
         placeholder_text=placeholder, height=38, corner_radius=8,
-        fg_color="#0d1828", border_color=COLORS["border"], border_width=1,
-        text_color="#ffffff", placeholder_text_color=COLORS["text_dim"],
-        font=ctk.CTkFont(family="Segoe UI", size=13),
+        fg_color=COLORS["input_bg"], border_color=COLORS["border"], border_width=1,
+        text_color=COLORS["text"], placeholder_text_color=COLORS["text_dim"],
+        font=ctk.CTkFont(family=FONT_BODY, size=13),
     )
     if show:
         defaults["show"] = show
@@ -107,23 +133,52 @@ def section_header(parent, text, pady=(20, 8)):
     f = ctk.CTkFrame(parent, fg_color="transparent")
     f.pack(fill="x", padx=20, pady=pady)
     ctk.CTkLabel(f, text=text,
-                 font=ctk.CTkFont(family="Segoe UI", size=14, weight="bold"),
+                 font=ctk.CTkFont(family=FONT_DISPLAY, size=14, weight="bold"),
                  text_color=COLORS["accent2"]).pack(side="left")
     ctk.CTkFrame(f, height=1, fg_color=COLORS["border"]).pack(
         side="left", fill="x", expand=True, padx=(10, 0))
     return f
 
 
+# ══════════════════════════════════════════════════════════════
+#  COMPONENTES NUEVOS — chip de ícono / insignia tipo píldora
+# ══════════════════════════════════════════════════════════════
+def icon_chip(parent, icon, color=None, size=40, **kwargs):
+    """Cuadro redondeado con un ícono/emoji centrado, tono derivado
+    del color de acento — usado en tarjetas de estadísticas y listas."""
+    color = color or COLORS["accent"]
+    chip = ctk.CTkFrame(parent, width=size, height=size,
+                        corner_radius=max(8, size // 3),
+                        fg_color=_tint(color, 0.22), **kwargs)
+    chip.pack_propagate(False)
+    ctk.CTkLabel(chip, text=icon, font=ctk.CTkFont(size=int(size * 0.45)),
+                 text_color=color).place(relx=0.5, rely=0.5, anchor="center")
+    return chip
+
+
+def pill_badge(parent, text, color=None, text_color=None, **kwargs):
+    """Insignia redondeada tipo 'píldora' (ej. Pagada / Pendiente / 27d).
+    Devuelve un CTkFrame — el llamador decide cómo posicionarlo (pack/grid)."""
+    color = color or COLORS["accent"]
+    f = ctk.CTkFrame(parent, fg_color=_tint(color, 0.24), corner_radius=999, **kwargs)
+    ctk.CTkLabel(f, text=text,
+                 font=ctk.CTkFont(family=FONT_DISPLAY, size=11, weight="bold"),
+                 text_color=text_color or color).pack(padx=12, pady=4)
+    return f
+
+
 def stat_card(parent, icon, title, value, color=None, **kwargs):
     c = card(parent, **kwargs)
     color = color or COLORS["accent"]
-    ctk.CTkLabel(c, text=icon, font=ctk.CTkFont(size=28)).pack(pady=(16, 4))
-    ctk.CTkLabel(c, text=str(value),
-                 font=ctk.CTkFont(family="Segoe UI", size=22, weight="bold"),
-                 text_color=color).pack()
-    ctk.CTkLabel(c, text=title,
-                 font=ctk.CTkFont(family="Segoe UI", size=11, weight="bold"),
-                 text_color="#c8dcf5").pack(pady=(2, 16))
+    inner = ctk.CTkFrame(c, fg_color="transparent")
+    inner.pack(fill="both", expand=True, padx=16, pady=(16, 14))
+    icon_chip(inner, icon, color, size=38).pack(anchor="w")
+    ctk.CTkLabel(inner, text=str(value),
+                 font=ctk.CTkFont(family=FONT_MONO, size=24, weight="bold"),
+                 text_color=color).pack(anchor="w", pady=(10, 0))
+    ctk.CTkLabel(inner, text=title.upper(),
+                 font=ctk.CTkFont(family=FONT_DISPLAY, size=10, weight="bold"),
+                 text_color=COLORS["text_dim"]).pack(anchor="w", pady=(2, 0))
     return c
 
 
@@ -135,23 +190,23 @@ def build_treeview(parent, columns, heights=None, col_anchors=None):
     style = ttk.Style()
     style.theme_use("clam")
     style.configure("Stream.Treeview",
-                    background="#111c30",
-                    foreground="#f0f6ff",
-                    fieldbackground="#111c30",
-                    rowheight=40,
-                    font=("Segoe UI", 11),
+                    background=COLORS["bg_card"],
+                    foreground=COLORS["text"],
+                    fieldbackground=COLORS["bg_card"],
+                    rowheight=42,
+                    font=(FONT_BODY, 11),
                     borderwidth=0)
     style.configure("Stream.Treeview.Heading",
-                    background="#091020",
-                    foreground="#8aabda",
-                    font=("Segoe UI", 11, "bold"),
+                    font=(FONT_DISPLAY, 10, "bold"),
+                    background=COLORS["bg_sidebar"],
+                    foreground=COLORS["text_dim"],
                     borderwidth=0,
                     relief="flat")
     style.map("Stream.Treeview",
-              background=[("selected", "#1d6fd8")],
-              foreground=[("selected", "white")])
+              background=[("selected", COLORS["accent"])],
+              foreground=[("selected", "#04110f")])
 
-    frame = ctk.CTkFrame(parent, fg_color="#111c30", corner_radius=12)
+    frame = ctk.CTkFrame(parent, fg_color=COLORS["bg_card"], corner_radius=12)
     tree = ttk.Treeview(frame, columns=columns, show="headings",
                         style="Stream.Treeview",
                         height=heights or 14)
@@ -279,8 +334,11 @@ class DateEntryWidget(ctk.CTkFrame):
     def __init__(self, parent, **kwargs):
         super().__init__(parent, fg_color="transparent")
         self.var = tk.StringVar()
-        self.entry = entry_field(self, placeholder="AAAA-MM-DD", **kwargs)
-        self.entry.configure(textvariable=self.var)
+        # IMPORTANTE: la variable se conecta DESDE la creación del CTkEntry,
+        # no con .configure() después — si no, CustomTkinter puede perder
+        # la sincronización con el placeholder y .get() devuelve vacío.
+        self.entry = entry_field(self, placeholder="AAAA-MM-DD",
+                                  textvariable=self.var, **kwargs)
         self.entry.pack(side="left", fill="x", expand=True)
         ctk.CTkButton(self, text="📅", width=38, height=38,
                       corner_radius=8, fg_color=COLORS["border"],

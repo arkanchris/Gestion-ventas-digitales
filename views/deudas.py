@@ -24,8 +24,8 @@ class DeudasView(ctk.CTkFrame):
         # ══════════════════════════════════════════════════════
         #  1. CUENTA DE COBRO — siempre visible arriba
         # ══════════════════════════════════════════════════════
-        cobro_card = ctk.CTkFrame(self, fg_color="#0e2040", corner_radius=12,
-                                   border_width=1, border_color="#1d6fd8")
+        cobro_card = ctk.CTkFrame(self, fg_color="#123044", corner_radius=12,
+                                   border_width=1, border_color="#0ea5a4")
         cobro_card.pack(fill="x", padx=24, pady=(0, 4))
         ci = ctk.CTkFrame(cobro_card, fg_color="transparent")
         ci.pack(fill="x", padx=16, pady=8)
@@ -38,7 +38,7 @@ class DeudasView(ctk.CTkFrame):
         ctk.CTkButton(ci, text="📄  Generar Cuenta de Cobro",
                       command=self._generar_cuenta_cobro,
                       height=34, corner_radius=8,
-                      fg_color="#1d4ed8", hover_color="#1558b0",
+                      fg_color="#0ea5a4", hover_color="#0b8482",
                       font=ctk.CTkFont(size=13, weight="bold"),
                       text_color="white").pack(side="right")
 
@@ -60,7 +60,7 @@ class DeudasView(ctk.CTkFrame):
             row1, text="✅  Marcar 1 seleccionada como Pagada",
             command=self._marcar_pagada_una,
             height=34, corner_radius=8,
-            fg_color="#065f46", hover_color="#044a35",
+            fg_color="#4c3fa8", hover_color="#3c3186",
             font=ctk.CTkFont(size=12, weight="bold"), text_color="white"
         ).pack(side="left", padx=(0, 8))
 
@@ -82,14 +82,14 @@ class DeudasView(ctk.CTkFrame):
         ctk.CTkLabel(row2,
                      text="Filtra distribuidor + fechas → marca todo el lote como pagado de un clic",
                      font=ctk.CTkFont(size=11),
-                     text_color="#3d5470").pack(side="left", padx=(0, 16))
+                     text_color="#2c4a5c").pack(side="left", padx=(0, 16))
 
         ctk.CTkButton(
             row2,
             text="💰  MARCAR LOTE COMO PAGADO",
             command=self._marcar_lote_pagado,
             height=34, corner_radius=8,
-            fg_color="#7c3aed", hover_color="#6d28d9",
+            fg_color="#b34cd1", hover_color="#8f3aac",
             font=ctk.CTkFont(size=13, weight="bold"),
             text_color="white",
         ).pack(side="right")
@@ -123,7 +123,7 @@ class DeudasView(ctk.CTkFrame):
         self.dist_filter = ctk.CTkComboBox(
             f1, values=list(self.dist_map.keys()),
             width=200, height=34, corner_radius=8,
-            fg_color="#0d1828", border_color=COLORS["border"],
+            fg_color="#0a1620", border_color=COLORS["border"],
             button_color=COLORS["accent"],
             font=ctk.CTkFont(size=13), text_color=COLORS["text"],
             command=lambda e: self._load())
@@ -139,7 +139,7 @@ class DeudasView(ctk.CTkFrame):
         self.plat_filter = ctk.CTkComboBox(
             f1, values=list(self.plat_map.keys()),
             width=180, height=34, corner_radius=8,
-            fg_color="#0d1828", border_color=COLORS["border"],
+            fg_color="#0a1620", border_color=COLORS["border"],
             button_color=COLORS["accent"],
             font=ctk.CTkFont(size=13), text_color=COLORS["text"],
             command=lambda e: self._load())

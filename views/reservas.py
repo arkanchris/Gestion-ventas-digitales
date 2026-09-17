@@ -66,7 +66,7 @@ class ReservasView(ctk.CTkFrame):
         self.f_plat = ctk.CTkComboBox(
             sf, values=list(self.fplat_map.keys()),
             width=120, height=32, corner_radius=8,
-            fg_color="#0d1828", border_color=COLORS["border"],
+            fg_color="#0a1620", border_color=COLORS["border"],
             button_color=COLORS["accent"],
             font=ctk.CTkFont(size=12), text_color=COLORS["text"],
             command=lambda e: self._load_cuentas())
@@ -121,7 +121,7 @@ class ReservasView(ctk.CTkFrame):
         elif dias <= 10:   ind_color = COLORS["yellow"]
         else:              ind_color = COLORS["accent3"]
 
-        frame = ctk.CTkFrame(self.list_frame, fg_color="#0d1828",
+        frame = ctk.CTkFrame(self.list_frame, fg_color="#0a1620",
                               corner_radius=10, border_width=2,
                               border_color=COLORS["border"])
         frame.pack(fill="x", padx=8, pady=4)
@@ -168,9 +168,9 @@ class ReservasView(ctk.CTkFrame):
         for c_id, frame in self._cuenta_cards.items():
             try:
                 if c_id == cid:
-                    frame.configure(border_color=COLORS["accent"], fg_color="#0e2040")
+                    frame.configure(border_color=COLORS["accent"], fg_color="#123044")
                 else:
-                    frame.configure(border_color=COLORS["border"], fg_color="#0d1828")
+                    frame.configure(border_color=COLORS["border"], fg_color="#0a1620")
             except: pass
 
     # ─── Panel derecho: DETALLE ───────────────────────────────
@@ -204,7 +204,7 @@ class ReservasView(ctk.CTkFrame):
         scroll.pack(fill="both", expand=True)
 
         # ── Encabezado cuenta ──
-        hdr = ctk.CTkFrame(scroll, fg_color="#091020", corner_radius=12)
+        hdr = ctk.CTkFrame(scroll, fg_color="#0a141a", corner_radius=12)
         hdr.pack(fill="x", padx=14, pady=(14, 8))
 
         h1 = ctk.CTkFrame(hdr, fg_color="transparent")
@@ -238,7 +238,7 @@ class ReservasView(ctk.CTkFrame):
         for i, (lbl, val) in enumerate(campos):
             col = i % 2
             row = i // 2
-            box = ctk.CTkFrame(data_frame, fg_color="#0d1828", corner_radius=8)
+            box = ctk.CTkFrame(data_frame, fg_color="#0a1620", corner_radius=8)
             box.grid(row=row, column=col, sticky="ew", padx=4, pady=4)
             ctk.CTkLabel(box, text=lbl, font=ctk.CTkFont(size=10),
                          text_color=COLORS["text_dim"], anchor="w"
@@ -250,13 +250,13 @@ class ReservasView(ctk.CTkFrame):
         # Notas
         notas = cuenta.get("notas","").strip()
         if notas:
-            n_box = ctk.CTkFrame(hdr, fg_color="#1a2a1a", corner_radius=8)
+            n_box = ctk.CTkFrame(hdr, fg_color="#142a28", corner_radius=8)
             n_box.pack(fill="x", padx=14, pady=(0, 12))
             ctk.CTkLabel(n_box, text="📝 Notas",
                          font=ctk.CTkFont(size=10),
                          text_color=COLORS["accent3"]).pack(anchor="w", padx=10, pady=(6,2))
             ctk.CTkLabel(n_box, text=notas,
-                         font=ctk.CTkFont(size=12), text_color="#c8f5c8",
+                         font=ctk.CTkFont(size=12), text_color="#b9f3e8",
                          anchor="w", justify="left", wraplength=380
                          ).pack(anchor="w", padx=10, pady=(0,8))
 
@@ -295,7 +295,7 @@ class ReservasView(ctk.CTkFrame):
         self._editing_perfil_id = None
         self._cuenta_ref        = cuenta
 
-        add_card = ctk.CTkFrame(scroll, fg_color="#0d1828", corner_radius=10)
+        add_card = ctk.CTkFrame(scroll, fg_color="#0a1620", corner_radius=10)
         add_card.pack(fill="x", padx=14, pady=(0, 10))
 
         add_top = ctk.CTkFrame(add_card, fg_color="transparent")
@@ -344,7 +344,7 @@ class ReservasView(ctk.CTkFrame):
         ctk.CTkLabel(form, text="Notas (opcional):", font=ctk.CTkFont(size=11),
                      text_color=COLORS["text_dim"]).grid(row=6, column=0, columnspan=2, sticky="w")
         self._e_notas_perfil = ctk.CTkTextbox(
-            form, height=50, fg_color="#0a1220",
+            form, height=50, fg_color="#0a1620",
             border_color=COLORS["border"], border_width=1,
             font=ctk.CTkFont(size=12), text_color="#ffffff", corner_radius=8)
         self._e_notas_perfil.grid(row=7, column=0, columnspan=2, sticky="ew", pady=(2, 12))
@@ -357,7 +357,7 @@ class ReservasView(ctk.CTkFrame):
             btnrow, text="➕  Agregar",
             command=self._guardar_perfil,
             height=32, corner_radius=8, width=110,
-            fg_color=COLORS["accent"], hover_color="#1558b0",
+            fg_color=COLORS["accent"], hover_color="#0b8482",
             font=ctk.CTkFont(size=12, weight="bold"), text_color="white")
         self._btn_add_p.pack(side="left", padx=(0, 6))
 
@@ -365,8 +365,8 @@ class ReservasView(ctk.CTkFrame):
             btnrow, text="✕",
             command=self._cancelar_perfil,
             height=32, corner_radius=8, width=36,
-            fg_color="#1e3256", hover_color=COLORS["border"],
-            font=ctk.CTkFont(size=12), text_color="#3d5470", state="disabled")
+            fg_color="#193040", hover_color=COLORS["border"],
+            font=ctk.CTkFont(size=12), text_color="#2c4a5c", state="disabled")
         self._btn_cancel_p.pack(side="left")
 
         # Tarjetas de perfiles
@@ -393,7 +393,7 @@ class ReservasView(ctk.CTkFrame):
         for i, p in enumerate(perfiles):
             pid  = p["id"]
             dias = days_remaining(p.get("fecha_fin",""))
-            bg   = "#111c30" if i % 2 == 0 else "#0d1828"
+            bg   = "#0e1a22" if i % 2 == 0 else "#0a1620"
 
             if dias is None:   d_color, d_txt = COLORS["text_dim"], "Sin fecha"
             elif dias < 0:     d_color, d_txt = COLORS["red"],    f"Vencido hace {abs(dias)}d"
@@ -413,13 +413,13 @@ class ReservasView(ctk.CTkFrame):
             ctk.CTkButton(
                 btns, text="🗑  Eliminar", command=lambda pid=pid: self._eliminar_perfil(pid),
                 height=30, corner_radius=6,
-                fg_color=COLORS["red"], hover_color="#a83232",
+                fg_color=COLORS["red"], hover_color="#c7425a",
                 font=ctk.CTkFont(size=11, weight="bold"), text_color="white"
             ).pack(side="right", padx=(6, 0))
             ctk.CTkButton(
                 btns, text="✏️  Editar", command=lambda p=p: self._editar_perfil_inline(p),
                 height=30, corner_radius=6,
-                fg_color=COLORS["accent"], hover_color="#1558b0",
+                fg_color=COLORS["accent"], hover_color="#0b8482",
                 font=ctk.CTkFont(size=11, weight="bold"), text_color="white"
             ).pack(side="right")
 
@@ -490,8 +490,8 @@ class ReservasView(ctk.CTkFrame):
     def _editar_perfil_inline(self, p):
         self._editing_perfil_id = p["id"]
         self._add_lbl.configure(text="✏️  Editando perfil")
-        self._btn_add_p.configure(text="💾  Guardar", fg_color="#065f46",
-                                   hover_color="#044a35")
+        self._btn_add_p.configure(text="💾  Guardar", fg_color="#4c3fa8",
+                                   hover_color="#3c3186")
         self._btn_cancel_p.configure(state="normal", fg_color=COLORS["border"],
                                       text_color=COLORS["text"])
         self._e_num.delete(0,"end"); self._e_num.insert(0, str(p.get("numero_perfil","")))
@@ -506,9 +506,9 @@ class ReservasView(ctk.CTkFrame):
         self._editing_perfil_id = None
         self._add_lbl.configure(text="➕  Agregar perfil")
         self._btn_add_p.configure(text="➕  Agregar", fg_color=COLORS["accent"],
-                                   hover_color="#1558b0")
-        self._btn_cancel_p.configure(state="disabled", fg_color="#1e3256",
-                                      text_color="#3d5470")
+                                   hover_color="#0b8482")
+        self._btn_cancel_p.configure(state="disabled", fg_color="#193040",
+                                      text_color="#2c4a5c")
         for e in [self._e_num, self._e_cli, self._e_pin]:
             e.delete(0,"end")
         self._e_fi.set(date.today().strftime("%Y-%m-%d"))
@@ -593,7 +593,7 @@ class CuentaFormWindow(ctk.CTkToplevel):
         self.e_plat   = ctk.CTkComboBox(
             scroll, values=plat_names or ["— Crea plataformas primero —"],
             height=36, corner_radius=8,
-            fg_color="#0d1828", border_color=COLORS["border"],
+            fg_color="#0a1620", border_color=COLORS["border"],
             button_color=COLORS["accent"],
             font=ctk.CTkFont(size=13), text_color="#ffffff")
         self.e_plat.pack(fill="x", padx=20, pady=(0,4))
@@ -634,7 +634,7 @@ class CuentaFormWindow(ctk.CTkToplevel):
         self.e_f_fin.pack(fill="x", padx=20, pady=(0,4))
 
         lbl("Notas (opcional)")
-        self.e_notas = ctk.CTkTextbox(scroll, height=65, fg_color="#0d1828",
+        self.e_notas = ctk.CTkTextbox(scroll, height=65, fg_color="#0a1620",
                                        border_color=COLORS["border"], border_width=1,
                                        font=ctk.CTkFont(size=12), text_color="#ffffff",
                                        corner_radius=8)

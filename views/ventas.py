@@ -43,8 +43,8 @@ class VentasView(ctk.CTkFrame):
         self.mode_label.pack(side="left", padx=14)
 
         # ── Selector de modo ──
-        modo_card = ctk.CTkFrame(s, fg_color="#0e2040", corner_radius=12,
-                                  border_width=1, border_color="#1d6fd8")
+        modo_card = ctk.CTkFrame(s, fg_color="#123044", corner_radius=12,
+                                  border_width=1, border_color="#0ea5a4")
         modo_card.pack(fill="x", padx=24, pady=(0, 8))
         mi = ctk.CTkFrame(modo_card, fg_color="transparent")
         mi.pack(fill="x", padx=16, pady=10)
@@ -56,14 +56,14 @@ class VentasView(ctk.CTkFrame):
                       command=lambda: self._set_modo(False),
                       height=34, corner_radius=8, width=180,
                       fg_color=COLORS["accent"] if not multi else COLORS["border"],
-                      hover_color="#1558b0",
+                      hover_color="#0b8482",
                       font=ctk.CTkFont(size=12, weight="bold"),
                       text_color="white").pack(side="left", padx=(0, 8))
         ctk.CTkButton(mi, text="📦  Venta Múltiple",
                       command=lambda: self._set_modo(True),
                       height=34, corner_radius=8, width=200,
                       fg_color=COLORS["accent"] if multi else COLORS["border"],
-                      hover_color="#1558b0",
+                      hover_color="#0b8482",
                       font=ctk.CTkFont(size=12, weight="bold"),
                       text_color="white").pack(side="left")
 
@@ -197,7 +197,7 @@ class VentasView(ctk.CTkFrame):
                      font=ctk.CTkFont(size=13), text_color=COLORS["text_dim"]).pack(side="left")
         self.estado_pago = ctk.CTkSegmentedButton(
             r6, values=["pagada", "pendiente"],
-            selected_color=COLORS["accent"], selected_hover_color="#1558b0",
+            selected_color=COLORS["accent"], selected_hover_color="#0b8482",
             unselected_color=COLORS["border"],
             font=ctk.CTkFont(size=13), text_color=COLORS["text"])
         self.estado_pago.set("pagada")
@@ -206,7 +206,7 @@ class VentasView(ctk.CTkFrame):
         section_header(s, "📝  Notas")
         nf = card(s)
         nf.pack(fill="x", padx=24, pady=4)
-        self.e_notas = ctk.CTkTextbox(nf, height=70, fg_color="#0d1828",
+        self.e_notas = ctk.CTkTextbox(nf, height=70, fg_color="#0a1620",
                                        border_color=COLORS["border"], border_width=1,
                                        font=ctk.CTkFont(size=13), text_color="#ffffff",
                                        corner_radius=8)
@@ -285,7 +285,7 @@ class VentasView(ctk.CTkFrame):
                      text_color=COLORS["text_dim"]).pack(side="left")
         self.m_estado = ctk.CTkSegmentedButton(
             r5b, values=["pagada", "pendiente"],
-            selected_color=COLORS["accent"], selected_hover_color="#1558b0",
+            selected_color=COLORS["accent"], selected_hover_color="#0b8482",
             unselected_color=COLORS["border"],
             font=ctk.CTkFont(size=13), text_color=COLORS["text"])
         self.m_estado.set("pagada")
@@ -335,12 +335,12 @@ class VentasView(ctk.CTkFrame):
             ctk.CTkButton(add_f, text="➕  Agregar esta plataforma al pedido",
                           command=self._agregar_item,
                           height=38, corner_radius=8,
-                          fg_color="#065f46", hover_color="#044a35",
+                          fg_color="#4c3fa8", hover_color="#3c3186",
                           font=ctk.CTkFont(size=13, weight="bold"),
                           text_color="white").pack(side="left")
             ctk.CTkLabel(add_f,
                          text="← Rellena y haz clic para agregar. Repite por cada plataforma.",
-                         font=ctk.CTkFont(size=11), text_color="#3d5470"
+                         font=ctk.CTkFont(size=11), text_color="#2c4a5c"
                          ).pack(side="left", padx=12)
 
         # Lista de plataformas
@@ -354,7 +354,7 @@ class VentasView(ctk.CTkFrame):
         nf = card(s)
         nf.pack(fill="x", padx=24, pady=4)
         self.e_notas_gral = ctk.CTkTextbox(
-            nf, height=60, fg_color="#0d1828",
+            nf, height=60, fg_color="#0a1620",
             border_color=COLORS["border"], border_width=1,
             font=ctk.CTkFont(size=13), text_color="#ffffff", corner_radius=8)
         self.e_notas_gral.pack(fill="x", padx=16, pady=10)
@@ -364,7 +364,7 @@ class VentasView(ctk.CTkFrame):
         ctk.CTkButton(bf, text="💾  GUARDAR PEDIDO COMPLETO Y GENERAR TIRILLA",
                       command=self._guardar_multiple,
                       height=44, corner_radius=10,
-                      fg_color="#1d4ed8", hover_color="#1558b0",
+                      fg_color="#0ea5a4", hover_color="#0b8482",
                       font=ctk.CTkFont(size=14, weight="bold"),
                       text_color="white").pack(side="left", padx=(0, 10))
         secondary_btn(bf, "✕  Cancelar todo",
@@ -399,13 +399,13 @@ class VentasView(ctk.CTkFrame):
 
         total = 0
         for i, item in enumerate(self.items_multiple):
-            bg  = "#0d1828" if i % 2 == 0 else "#111c30"
+            bg  = "#0a1620" if i % 2 == 0 else "#0e1a22"
             row = ctk.CTkFrame(self.items_frame, fg_color=bg, corner_radius=6)
             row.pack(fill="x", padx=10, pady=1)
             total += item.get("precio_venta", 0)
 
             if self.editing_item == i:
-                row.configure(fg_color="#0e2040",
+                row.configure(fg_color="#123044",
                               border_color=COLORS["accent"], border_width=1)
 
             vals = [
@@ -427,16 +427,16 @@ class VentasView(ctk.CTkFrame):
             idx = i
             ctk.CTkButton(row, text="✏️", width=COL_W[8], height=28,
                           corner_radius=6, fg_color=COLORS["accent"],
-                          hover_color="#1558b0", font=ctk.CTkFont(size=11),
+                          hover_color="#0b8482", font=ctk.CTkFont(size=11),
                           command=lambda ix=idx: self._editar_item(ix)
                           ).grid(row=0, column=8, padx=3, pady=4)
             ctk.CTkButton(row, text="✕", width=COL_W[9], height=28,
                           corner_radius=6, fg_color=COLORS["red"],
-                          hover_color="#cc2233", font=ctk.CTkFont(size=11),
+                          hover_color="#c7425a", font=ctk.CTkFont(size=11),
                           command=lambda ix=idx: self._quitar_item(ix)
                           ).grid(row=0, column=9, padx=(3, 6), pady=4)
 
-        tf = ctk.CTkFrame(self.items_frame, fg_color="#0e2040", corner_radius=8)
+        tf = ctk.CTkFrame(self.items_frame, fg_color="#123044", corner_radius=8)
         tf.pack(fill="x", padx=10, pady=(4, 10))
         ctk.CTkLabel(tf, text=f"  {len(self.items_multiple)} plataforma(s) en el pedido",
                      font=ctk.CTkFont(size=12), text_color=COLORS["text_dim"]
@@ -710,7 +710,7 @@ def _lbl2(parent, text, col, width=90):
 def _combo(parent, values):
     return ctk.CTkComboBox(
         parent, values=values, height=38, corner_radius=8,
-        fg_color="#0d1828", border_color=COLORS["border"],
+        fg_color="#0a1620", border_color=COLORS["border"],
         button_color=COLORS["accent"],
         font=ctk.CTkFont(size=13), text_color="#ffffff")
 

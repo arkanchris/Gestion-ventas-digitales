@@ -1,5 +1,11 @@
+import os
 import customtkinter as ctk
+from PIL import Image
 from database import Database
+from widgets import COLORS
+
+BASE_DIR  = os.path.dirname(os.path.abspath(__file__))
+LOGO_PATH = os.path.join(BASE_DIR, "assets", "logo.png")
 from views.dashboard import Dashboard
 from views.ventas import VentasView
 from views.clientes import ClientesView
@@ -28,17 +34,8 @@ class StreamControlApp(ctk.CTk):
         self.geometry("1280x780")
         self.minsize(1100, 680)
 
-        self.colors = {
-            "bg_dark":    "#0b1120",
-            "bg_card":    "#111c30",
-            "bg_sidebar": "#091020",
-            "accent":     "#1d6fd8",
-            "accent2":    "#38bdf8",
-            "accent3":    "#22c55e",
-            "text":       "#f0f6ff",
-            "text_dim":   "#6b8abf",
-            "border":     "#1e3256",
-        }
+        # Un único origen de verdad para los colores: widgets.py
+        self.colors = COLORS
 
         self.configure(fg_color=self.colors["bg_dark"])
         self._build_ui()
@@ -50,28 +47,35 @@ class StreamControlApp(ctk.CTk):
 
         # ── Sidebar ──
         self.sidebar = ctk.CTkFrame(
-            self, width=220,
+            self, width=222,
             fg_color=self.colors["bg_sidebar"],
             corner_radius=0)
         self.sidebar.grid(row=0, column=0, sticky="nsew")
         self.sidebar.grid_rowconfigure(20, weight=1)
         self.sidebar.grid_propagate(False)
 
-        # Logo
+        # Logo — imagen real del negocio, grande, en vez del punto + texto
         logo_frame = ctk.CTkFrame(
-            self.sidebar, fg_color="#0d0f1a",
-            corner_radius=0, height=80)
+            self.sidebar, fg_color=self.colors["bg_dark"],
+            corner_radius=0, height=128)
         logo_frame.grid(row=0, column=0, sticky="ew")
-        logo_frame.grid_columnconfigure(0, weight=1)
         logo_frame.grid_propagate(False)
 
         config = self.db.get_config()
         bname  = config.get("business_name", "StreamControl") if config else "StreamControl"
-        self.logo_label = ctk.CTkLabel(
-            logo_frame,
-            text=f"🎬 {bname}",
-            font=ctk.CTkFont(family="Segoe UI", size=15, weight="bold"),
-            text_color=self.colors["accent"])
+
+        self.logo_image = None
+        try:
+            pil_img = Image.open(LOGO_PATH)
+            self.logo_image = ctk.CTkImage(light_image=pil_img, dark_image=pil_img,
+                                            size=(96, 96))
+            self.logo_label = ctk.CTkLabel(logo_frame, image=self.logo_image, text="")
+        except Exception:
+            # Si no se encuentra assets/logo.png, cae de vuelta al texto
+            self.logo_label = ctk.CTkLabel(
+                logo_frame, text=bname,
+                font=ctk.CTkFont(family="Bahnschrift", size=15, weight="bold"),
+                text_color=self.colors["text"])
         self.logo_label.place(relx=0.5, rely=0.5, anchor="center")
 
         # Nav items
@@ -91,8 +95,8 @@ class StreamControlApp(ctk.CTk):
         for i, (key, icon, label) in enumerate(nav_items):
             btn = ctk.CTkButton(
                 self.sidebar,
-                text=f"  {icon}  {label}",
-                anchor="w", height=44, corner_radius=8,
+                text=f"  {icon}   {label}",
+                anchor="w", height=42, corner_radius=10,
                 fg_color="transparent",
                 hover_color=self.colors["border"],
                 text_color=self.colors["text_dim"],
@@ -104,8 +108,8 @@ class StreamControlApp(ctk.CTk):
         ctk.CTkLabel(
             self.sidebar,
             text="v1.0.0 — StreamControl",
-            font=ctk.CTkFont(size=10),
-            text_color="#3a3d5a"
+            font=ctk.CTkFont(family="Segoe UI", size=10),
+            text_color="#2c4658"
         ).grid(row=21, column=0, pady=10)
 
         # ── Content area ──
@@ -119,9 +123,12 @@ class StreamControlApp(ctk.CTk):
 
     def show_view(self, name):
         for k, btn in self.nav_buttons.items():
+            active = (k == name)
             btn.configure(
-                fg_color="#0e2040" if k == name else "transparent",
-                text_color=self.colors["text"] if k == name else self.colors["text_dim"])
+                fg_color=self.colors["accent3"] if active else "transparent",
+                text_color="#04110f" if active else self.colors["text_dim"],
+                font=ctk.CTkFont(family="Segoe UI", size=13,
+                                  weight="bold" if active else "normal"))
 
         for widget in self.content_frame.winfo_children():
             widget.destroy()
@@ -146,7 +153,9 @@ class StreamControlApp(ctk.CTk):
     def refresh_sidebar_name(self):
         config = self.db.get_config()
         bname  = config.get("business_name", "StreamControl") if config else "StreamControl"
-        self.logo_label.configure(text=f"🎬 {bname}")
+        if self.logo_image is None:
+            # Solo si estamos en modo texto de respaldo (no se encontró el logo)
+            self.logo_label.configure(text=bname)
         self.title(f"🎬 {bname} — Sistema de Ventas")
 
 

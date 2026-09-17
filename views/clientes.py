@@ -45,7 +45,7 @@ class ClientesView(ctk.CTkFrame):
         self.plat_filter = ctk.CTkComboBox(
             inner, values=list(self.plat_filter_map.keys()),
             width=150, height=34, corner_radius=8,
-            fg_color="#0d1828", border_color=COLORS["border"],
+            fg_color="#0a1620", border_color=COLORS["border"],
             button_color=COLORS["accent"],
             font=ctk.CTkFont(size=13), text_color=COLORS["text"],
             command=lambda e: self._load())
@@ -57,7 +57,7 @@ class ClientesView(ctk.CTkFrame):
         self.estado_filter = ctk.CTkComboBox(
             inner, values=["Todos", "pagada", "pendiente"],
             width=120, height=34, corner_radius=8,
-            fg_color="#0d1828", border_color=COLORS["border"],
+            fg_color="#0a1620", border_color=COLORS["border"],
             button_color=COLORS["accent"],
             font=ctk.CTkFont(size=13), text_color=COLORS["text"],
             command=lambda e: self._load())
@@ -79,7 +79,7 @@ class ClientesView(ctk.CTkFrame):
 
         # Selección
         ctk.CTkLabel(act, text="Selecciona:",
-                     font=ctk.CTkFont(size=11), text_color="#3d5470"
+                     font=ctk.CTkFont(size=11), text_color="#2c4a5c"
                      ).pack(side="left", padx=(0, 6))
 
         secondary_btn(act, "☑  Todas",
@@ -216,7 +216,7 @@ class ClientesView(ctk.CTkFrame):
                 self.tree.item(iid, tags=())
 
         # Colores para filas seleccionadas
-        self.tree.tag_configure("checked", background="#1e3a5f", foreground="#f0f6ff")
+        self.tree.tag_configure("checked", background="#123044", foreground="#eaf6fb")
         self._update_sel_label()
 
     # ═══════════════════════════════════════════════════════════

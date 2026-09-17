@@ -69,7 +69,7 @@ class PlataformasView(ctk.CTkFrame):
                      text_color=COLORS["text_dim"]).pack(anchor="w", padx=16)
 
         # Image preview box
-        self.img_preview_frame = ctk.CTkFrame(form_scroll, fg_color="#0d1828",
+        self.img_preview_frame = ctk.CTkFrame(form_scroll, fg_color="#0a1620",
                                                corner_radius=10, width=100, height=100)
         self.img_preview_frame.pack(padx=16, pady=10, anchor="w")
         self.img_preview_frame.pack_propagate(False)

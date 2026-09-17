@@ -51,7 +51,7 @@ class ProveedoresView(ctk.CTkFrame):
         self.e_correo.pack(fill="x", padx=16, pady=(0, 4))
 
         lbl("Notas")
-        self.e_notas = ctk.CTkTextbox(form, height=70, fg_color="#12151f",
+        self.e_notas = ctk.CTkTextbox(form, height=70, fg_color="#0a1620",
                                        border_color=COLORS["border"], border_width=1,
                                        font=ctk.CTkFont(size=13), text_color=COLORS["text"],
                                        corner_radius=8)
