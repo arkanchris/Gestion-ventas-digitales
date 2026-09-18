@@ -156,10 +156,21 @@ def icon_chip(parent, icon, color=None, size=40, **kwargs):
     return chip
 
 
-def pill_badge(parent, text, color=None, text_color=None, **kwargs):
+def pill_badge(parent, text, color=None, text_color=None, width=None, **kwargs):
     """Insignia redondeada tipo 'píldora' (ej. Pagada / Pendiente / 27d).
+    Si se pasa 'width', el tamaño queda FIJO de verdad (no lo estira el
+    texto) — así varias píldoras en una fila quedan alineadas en columna.
     Devuelve un CTkFrame — el llamador decide cómo posicionarlo (pack/grid)."""
     color = color or COLORS["accent"]
+    if width:
+        f = ctk.CTkFrame(parent, fg_color="transparent", width=width, height=26, **kwargs)
+        f.pack_propagate(False)
+        inner = ctk.CTkFrame(f, fg_color=_tint(color, 0.24), corner_radius=999)
+        inner.place(relx=0.5, rely=0.5, anchor="center")
+        ctk.CTkLabel(inner, text=text,
+                     font=ctk.CTkFont(family=FONT_DISPLAY, size=11, weight="bold"),
+                     text_color=text_color or color).pack(padx=12, pady=4)
+        return f
     f = ctk.CTkFrame(parent, fg_color=_tint(color, 0.24), corner_radius=999, **kwargs)
     ctk.CTkLabel(f, text=text,
                  font=ctk.CTkFont(family=FONT_DISPLAY, size=11, weight="bold"),

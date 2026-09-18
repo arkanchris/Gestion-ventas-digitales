@@ -64,47 +64,64 @@ class Dashboard(ctk.CTkFrame):
                      font=ctk.CTkFont(family="Bahnschrift", size=14, weight="bold"),
                      text_color=COLORS["text"]).pack(anchor="w", padx=18, pady=(16, 4))
 
-        # Encabezado de columnas
-        head = ctk.CTkFrame(left, fg_color="transparent")
-        head.pack(fill="x", padx=18, pady=(6, 2))
-        for txt, w in [("CLIENTE", 130), ("PLATAFORMA", 130), ("VENCE", 85),
-                       ("DÍAS", 70), ("ESTADO", 90), ("PRECIO", 80)]:
-            ctk.CTkLabel(head, text=txt, width=w, anchor="w",
-                         font=ctk.CTkFont(family="Bahnschrift", size=10, weight="bold"),
-                         text_color=COLORS["text_dim"]).pack(side="left")
+        # Encabezado + filas en UNA SOLA cuadrícula (grid) compartida:
+        # así el ancho de cada columna se define en un único lugar y es
+        # IMPOSIBLE que el encabezado y los datos queden desalineados.
+        COLS = [
+            ("CLIENTE",    120, "w"),
+            ("PLATAFORMA", 120, "w"),
+            ("VENCE",       78, "w"),
+            ("DÍAS",        56, ""),
+            ("ESTADO",      76, ""),
+            ("PRECIO",      78, "e"),
+        ]
 
-        rows_wrap = ctk.CTkFrame(left, fg_color="transparent")
-        rows_wrap.pack(fill="both", expand=True, padx=12, pady=(2, 14))
+        table = ctk.CTkFrame(left, fg_color="transparent")
+        table.pack(fill="both", expand=True, padx=18, pady=(4, 14))
+        for c, (_, w, _a) in enumerate(COLS):
+            table.grid_columnconfigure(c, minsize=w, weight=0)
+
+        for c, (txt, w, anchor) in enumerate(COLS):
+            ctk.CTkLabel(table, text=txt, anchor=anchor or "center",
+                         font=ctk.CTkFont(family="Bahnschrift", size=10, weight="bold"),
+                         text_color=COLORS["text_dim"]
+                         ).grid(row=0, column=c, sticky=anchor, padx=(0, 6), pady=(0, 8))
 
         ventas = self.db.get_ventas()[:12]
+        row_i = 1
 
-        for i, v in enumerate(ventas):
+        for v in ventas:
             days   = days_remaining(v.get("fecha_vencimiento", ""))
             d_txt, d_color = days_badge(days)
             pagada = v["estado_pago"] == "pagada"
             e_txt   = "Pagada" if pagada else "Pendiente"
             e_color = COLORS["accent3"] if pagada else COLORS["accent4"]
 
-            row = ctk.CTkFrame(rows_wrap, fg_color=COLORS["bg_sidebar"] if i % 2 == 0 else "transparent",
-                                corner_radius=8)
-            row.pack(fill="x", pady=1)
-
-            ctk.CTkLabel(row, text=v["cliente"][:18], width=130, anchor="w",
+            ctk.CTkLabel(table, text=v["cliente"][:16], anchor="w",
                          font=ctk.CTkFont(family="Segoe UI", size=12),
-                         text_color=COLORS["text"]).pack(side="left", padx=(6, 0), pady=9)
-            ctk.CTkLabel(row, text=(v.get("plataforma_nombre") or "—")[:16], width=130, anchor="w",
+                         text_color=COLORS["text"]
+                         ).grid(row=row_i, column=0, sticky="w", padx=(0, 6), pady=7)
+            ctk.CTkLabel(table, text=(v.get("plataforma_nombre") or "—")[:15], anchor="w",
                          font=ctk.CTkFont(family="Segoe UI", size=12),
-                         text_color=COLORS["text_dim"]).pack(side="left")
-            ctk.CTkLabel(row, text=v.get("fecha_vencimiento", "—"), width=85, anchor="w",
+                         text_color=COLORS["text_dim"]
+                         ).grid(row=row_i, column=1, sticky="w", padx=(0, 6))
+            ctk.CTkLabel(table, text=v.get("fecha_vencimiento", "—"), anchor="w",
                          font=ctk.CTkFont(family="Consolas", size=11),
-                         text_color=COLORS["text_dim"]).pack(side="left")
+                         text_color=COLORS["text_dim"]
+                         ).grid(row=row_i, column=2, sticky="w", padx=(0, 6))
 
-            pill_badge(row, d_txt, d_color, width=70).pack(side="left", padx=(0, 4))
-            pill_badge(row, e_txt, e_color, width=90).pack(side="left", padx=(0, 4))
+            pill_badge(table, d_txt, d_color).grid(row=row_i, column=3, pady=3)
+            pill_badge(table, e_txt, e_color).grid(row=row_i, column=4, pady=3)
 
-            ctk.CTkLabel(row, text=f"${v['precio_venta']:,.0f}", width=80, anchor="e",
+            ctk.CTkLabel(table, text=f"${v['precio_venta']:,.0f}", anchor="e",
                          font=ctk.CTkFont(family="Consolas", size=12, weight="bold"),
-                         text_color=COLORS["text"]).pack(side="left")
+                         text_color=COLORS["text"]
+                         ).grid(row=row_i, column=5, sticky="e", padx=(6, 0))
+
+            row_i += 1
+            ctk.CTkFrame(table, height=1, fg_color=COLORS["border"]).grid(
+                row=row_i, column=0, columnspan=6, sticky="ew", pady=(7, 7))
+            row_i += 1
 
         if not ventas:
             ctk.CTkLabel(rows_wrap, text="No hay ventas registradas aún",

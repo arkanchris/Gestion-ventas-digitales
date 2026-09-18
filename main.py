@@ -2,7 +2,7 @@ import os
 import customtkinter as ctk
 from PIL import Image
 from database import Database
-from widgets import COLORS
+from widgets import COLORS, _tint
 
 BASE_DIR  = os.path.dirname(os.path.abspath(__file__))
 LOGO_PATH = os.path.join(BASE_DIR, "assets", "logo.png")
@@ -56,7 +56,7 @@ class StreamControlApp(ctk.CTk):
 
         # Logo — imagen real del negocio, grande, en vez del punto + texto
         logo_frame = ctk.CTkFrame(
-            self.sidebar, fg_color=self.colors["bg_dark"],
+            self.sidebar, fg_color=self.colors["bg_sidebar"],
             corner_radius=0, height=128)
         logo_frame.grid(row=0, column=0, sticky="ew")
         logo_frame.grid_propagate(False)
@@ -80,30 +80,49 @@ class StreamControlApp(ctk.CTk):
 
         # Nav items
         nav_items = [
-            ("dashboard",    "🏠",  "Dashboard"),
-            ("ventas",       "💰",  "Nueva Venta"),
-            ("clientes",     "👥",  "Clientes"),
-            ("deudas",       "📋",  "Deudas"),
-            ("plataformas",  "📺",  "Plataformas"),
-            ("proveedores",  "🏭",  "Distribuidores"),
-            ("reportes",     "📊",  "Reportes"),
-            ("reservas",     "📒",  "Libro de Cuentas"),
-            ("configuracion","⚙️",  "Configuración"),
+            ("dashboard",    "🏠",  "Dashboard",         self.colors["accent3"]),
+            ("ventas",       "💰",  "Nueva Venta",       self.colors["accent4"]),
+            ("clientes",     "👥",  "Clientes",          self.colors["accent2"]),
+            ("deudas",       "📋",  "Deudas",            self.colors["red"]),
+            ("plataformas",  "📺",  "Plataformas",       self.colors["accent"]),
+            ("proveedores",  "🏭",  "Distribuidores",    self.colors["accent4"]),
+            ("reportes",     "📊",  "Reportes",          self.colors["accent2"]),
+            ("reservas",     "📒",  "Libro de Cuentas",  self.colors["accent3"]),
+            ("configuracion","⚙️",  "Configuración",     self.colors["text_dim"]),
         ]
 
-        self.nav_buttons = {}
-        for i, (key, icon, label) in enumerate(nav_items):
-            btn = ctk.CTkButton(
-                self.sidebar,
-                text=f"  {icon}   {label}",
-                anchor="w", height=42, corner_radius=10,
-                fg_color="transparent",
-                hover_color=self.colors["border"],
-                text_color=self.colors["text_dim"],
-                font=ctk.CTkFont(family="Segoe UI", size=13),
-                command=lambda k=key: self.show_view(k))
-            btn.grid(row=i+1, column=0, sticky="ew", padx=12, pady=2)
-            self.nav_buttons[key] = btn
+        self.nav_refs = {}
+        self._active_key = None
+
+        for i, (key, icon, label, color) in enumerate(nav_items):
+            row = ctk.CTkFrame(self.sidebar, fg_color="transparent",
+                                corner_radius=10, height=42)
+            row.grid(row=i+1, column=0, sticky="ew", padx=12, pady=2)
+            row.grid_propagate(False)
+
+            chip = ctk.CTkFrame(row, width=30, height=30, corner_radius=9,
+                                 fg_color=_tint(color, 0.22))
+            chip.place(x=6, rely=0.5, anchor="w")
+            chip.pack_propagate(False)
+            icon_lbl = ctk.CTkLabel(chip, text=icon, font=ctk.CTkFont(size=14),
+                                     text_color=color)
+            icon_lbl.place(relx=0.5, rely=0.5, anchor="center")
+
+            text_lbl = ctk.CTkLabel(row, text=label, anchor="w",
+                                     font=ctk.CTkFont(family="Segoe UI", size=13),
+                                     text_color=self.colors["text_dim"])
+            text_lbl.place(x=48, rely=0.5, anchor="w")
+
+            for w in (row, chip, icon_lbl, text_lbl):
+                w.bind("<Button-1>", lambda e, k=key: self.show_view(k))
+                w.bind("<Enter>", lambda e, k=key: self._nav_hover(k, True))
+                w.bind("<Leave>", lambda e, k=key: self._nav_hover(k, False))
+
+            self.nav_refs[key] = dict(row=row, chip=chip, icon_lbl=icon_lbl,
+                                       text_lbl=text_lbl, color=color)
+
+        # Se mantiene por compatibilidad con código que aún use nav_buttons
+        self.nav_buttons = self.nav_refs
 
         ctk.CTkLabel(
             self.sidebar,
@@ -121,14 +140,28 @@ class StreamControlApp(ctk.CTk):
         self.content_frame.grid_columnconfigure(0, weight=1)
         self.content_frame.grid_rowconfigure(0, weight=1)
 
+    def _nav_hover(self, key, entering):
+        if key == self._active_key:
+            return  # el ítem activo no cambia con el hover
+        refs = self.nav_refs[key]
+        refs["row"].configure(fg_color=self.colors["border"] if entering else "transparent")
+
     def show_view(self, name):
-        for k, btn in self.nav_buttons.items():
+        self._active_key = name
+        for k, refs in self.nav_refs.items():
             active = (k == name)
-            btn.configure(
-                fg_color=self.colors["accent3"] if active else "transparent",
-                text_color="#04110f" if active else self.colors["text_dim"],
-                font=ctk.CTkFont(family="Segoe UI", size=13,
-                                  weight="bold" if active else "normal"))
+            if active:
+                refs["row"].configure(fg_color=self.colors["accent3"])
+                refs["chip"].configure(fg_color="transparent")
+                refs["icon_lbl"].configure(text_color="#04110f")
+                refs["text_lbl"].configure(text_color="#04110f",
+                                            font=ctk.CTkFont(family="Segoe UI", size=13, weight="bold"))
+            else:
+                refs["row"].configure(fg_color="transparent")
+                refs["chip"].configure(fg_color=_tint(refs["color"], 0.22))
+                refs["icon_lbl"].configure(text_color=refs["color"])
+                refs["text_lbl"].configure(text_color=self.colors["text_dim"],
+                                            font=ctk.CTkFont(family="Segoe UI", size=13, weight="normal"))
 
         for widget in self.content_frame.winfo_children():
             widget.destroy()
